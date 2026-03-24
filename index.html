@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Listening Practice PRO</title>
+
+<style>
+body{font-family:Arial;background:#f3f3f3;padding:20px;line-height:1.6;}
+.container{background:white;padding:25px;border-radius:10px;max-width:900px;margin:auto;box-shadow: 0 4px 15px rgba(0,0,0,0.1);}
+.blank{width:110px;padding:6px;margin:2px;border:1px solid #ccc;border-radius:5px;text-align:center;font-weight:bold;color:#2c3e50;}
+.correct{border:2px solid #4CAF50;background:#eaffea;color:#2e7d32;}
+.wrong{border:2px solid #f44336;background:#ffecec;color:#c62828;}
+button{padding:10px 20px;margin:5px;border:none;border-radius:5px;background:#4CAF50;color:white;cursor:pointer;font-weight:bold;}
+button:hover{background:#45a049;}
+iframe{width:100%;height:80px;border:none;margin-bottom:15px;background:#eee;border-radius:5px;}
+select{padding:8px;border-radius:5px;border:1px solid #ccc;margin-bottom:10px;}
+#exercise{font-size:17px;text-align:justify;}
+#score{color:#2c3e50;font-weight:bold;margin-top:20px;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🎧 Listening Practice PRO</h2>
+
+<label>Chọn bài học: </label>
+<select onchange="loadLesson(this.value)">
+<option value="0">Lesson 1: Starting a Business</option>
+<option value="1">Lesson 2: Customer Service</option>
+<option value="2">Lesson 3: Teamwork</option>
+<option value="3">Lesson 4: Communication</option>
+<option value="4">Lesson 5: Motivation</option>
+</select>
+
+<br>
+
+<iframe id="audio"></iframe>
+
+<h3>Exercise</h3>
+<div id="exercise"></div>
+
+<br>
+
+<button onclick="generate()">Làm bài mới</button>
+<button onclick="check()">Kiểm tra đáp án</button>
+<button onclick="showWrong()">Xem từ sai</button>
+
+<h3 id="score"></h3>
+
+</div>
+
+<script>
+
+let currentLesson = 0;
+
+const lessons = [
+    {
+        audio:"https://drive.google.com/file/d/1-8oGtT0TsMM9C-hwmkss2-VjD0_Xswnp/preview",
+        transcript:`Starting a small business can be both exciting and challenging, especially for people who are new to the world of entrepreneurship. Before opening a business, it's important to understand your customers and what they really need. Many new owners make the mistake of focusing only on their product, but forget to research the market. A successful business usually begins with a clear problem it can solve and a group of people willing to pay for that solution. Another key idea is planning. A good business plan doesn't need to be complicated but it should include your goals, your budget and your strategy for attracting customers. When you know how much money you need and how you will spend it, you can avoid many financial problems later on. Planning also helps you stay organized when unexpected situations happen, such as changes in prices or new competition. Communication is also essential. Whether you are selling online or in a physical store, customers want clear information and friendly service. If something goes wrong, they expect you to respond quickly and honestly. Good communication builds trust, and trust leads to long-term success and stronger customer relationships. Finally, remember that every business needs time to grow. You won't become successful overnight, so stay patient and flexible. Listen to feedback, watch your competitors, and keep improving your products or services. If you learn from your mistakes and continue to adapt, you will have a better chance of building a stable and successful business that can grow for many years.`,
+        fixed:["challenging","customers","successful","complicated","budget","organized","physical","honestly","feedback","adapt"]
+    },
+    {
+        audio:"https://drive.google.com/file/d/1RjhXJlscxcYPecTwAczEfrKSUh-S9-MS/preview",
+        transcript:`In today’s competitive market, customer service has become one of the most important parts of running a successful business. Many companies offer similar products, so what often makes a customer choose one brand over another is the quality of the service they receive. Good customer service does not only mean solving problems; it also means creating a positive experience from the moment a customer first contacts the company. To build strong customer service, businesses need to train their staff carefully. Employees should be able to listen actively, speak politely, and understand the needs of different customers. When customers feel respected, they are more likely to return and recommend the business to others. On the other hand, poor communication or slow responses can quickly damage a company’s reputation. Another key factor is transparency. Customers want honest information about prices, delivery times, and product details. If mistakes happen, companies should apologize clearly and offer a fair solution. This helps build trust, which is essential for long-term success. Brand reputation also depends on online interactions. Many customers share their opinions on social media or review websites. Businesses should monitor these platforms and respond professionally, especially when dealing with negative comments. A calm and helpful response can show other customers that the business takes responsibility. In the end, companies that invest in customer service often see better results. They create loyal customers, receive positive reviews and stand out from their competitors. A strong reputation can take years to build, but it can help a business grow steadily and confidently in the future.`,
+        fixed:["similar","experience","actively","communication","transparency","fair","monitor","responsibility","reviews","steadily"]
+    },
+    {
+        audio:"https://drive.google.com/file/d/1m338s1LwHBhh16LLawFdN_WNxJYsaucB/preview",
+        transcript:`Effective teamwork is one of the key elements that help a business operate smoothly and achieve long-term success. In many companies, employees work on different tasks, but they still need to communicate clearly and support one another. When team members share information on time and understand each other’s responsibilities, they can avoid confusion and complete their work more efficiently. Good internal communication also creates a more positive working environment. Employees who feel comfortable asking questions or sharing ideas are often more motivated and confident. This not only improves work performance but also helps build trust among team members. On the other hand, misunderstandings or lack of communication can lead to delays, mistakes, and unnecessary stress. Another important part of teamwork is collaboration. Successful teams listen to different opinions, discuss possible solutions, and make decisions together. Even when disagreements happen, respectful communication helps everyone stay focused on finding the best result. Many businesses also use digital tools such as messaging apps or project platforms to keep everyone updated, especially when working remotely. Leadership also plays a major role. A good leader guides the team, gives clear instructions, and ensures that every member knows their role. Leaders who encourage feedback and recognize employees efforts often create stronger and more productive teams. In the end, companies that invest in teamwork and communication usually perform better. They solve problems faster, deliver higher-quality work, and create a workplace where employees feel valued. A strong and cooperative team can help a business grow steadily and adapt to future challenges.`,
+        fixed:["success","support","efficiently","sharing","delays","collaboration","focused","remotely","feedback","valued"]
+    },
+    {
+        audio:"https://drive.google.com/file/d/1o8GP-GzDZUqNckMriss5f-Yc2MWjC4JL/preview",
+        transcript:`In many organizations, effective communication plays an important role in daily operations and long-term success. Employees need to exchange information clearly in order to coordinate tasks, solve problems, and make important decisions. One common challenge is information overload. Staff often receive large numbers of emails, messages, and reports, making it difficult to identify what is truly important. This approach helps reduce confusion and improves overall accuracy. Meetings are another area where communication quality matters. Effective meetings usually have a clear agenda, defined roles, and specific outcomes. When participants understand the purpose of a meeting, they are more likely to stay focused and contribute actively. Feedback is also essential for improvement. Constructive feedback should be given clearly and respectfully. This helps build trust and encourages professional development. Finally, communication should continue after decisions are made. Follow-up messages help clarify responsibilities and ensure progress. Employees are more confident and more willing to take responsibility. Overall, businesses that invest in strong communication practices often experience better teamwork, higher productivity, and more consistent performance in competitive environments.`,
+        fixed:["tasks","identify","accuracy","agenda","actively","constructive","development","clarify","willing","productivity"]
+    },
+    {
+        audio:"https://drive.google.com/file/d/17IIS-NNdLxPZt0Wi4t4tBWOUwI2NeQve/preview",
+        transcript:`Employee motivation is a key factor that influences productivity and overall business performance. When employees feel motivated, they are more likely to work actively, take responsibility, and contribute positively to their teams. In contrast, low motivation can lead to poor results, higher absenteeism, and increased staff turnover. One important element that affects motivation is recognition. Employees want their efforts to be noticed and creative. Simple actions, such as positive feedback or public praise, can improve morale and encourage continued effort. Fair reward systems also help employees feel that their work is valued and respected by the organization. Opportunities for development are another major factor. Many employees expect their companies to provide training and chances to improve their skills. When workers see clear career opportunities, they are more likely to stay with the company and invest effort in their roles. Without such opportunities, motivation may gradually loss. The working environment also plays a significant role. Supportive managers, clear communication, and respectful relationships help employees feel confident. Managers who listen to concerns and respond clarification can prevent small issues from becoming serious problems. Finally, motivation is closely related to work-life balance. Employees who manage their time well and maintain personal well-being are often more productive at work. Companies can support this by offering flexible schedule or realistic workloads. Overall, motivated employees tend to cooperate better, show stronger commitment to their organization, and achieve more consistent results. In the long term, motivation should be treated as a strategic quality for business success across all departments and organizational levels.`,
+        fixed:["actively","creative","valued","career","loss","clarification","related","schedule","results","quality"]
+    }
+];
+
+function randomPick(arr,n){
+    return [...arr].sort(()=>0.5-Math.random()).slice(0,n);
+}
+
+function loadLesson(index){
+    currentLesson=index;
+    document.getElementById("audio").src=lessons[index].audio;
+    generate();
+}
+
+function generate(){
+    let lesson = lessons[currentLesson];
+    let text = lesson.transcript;
+    let targetWords = lesson.fixed; // Sử dụng đủ 10 từ bạn đã cung cấp cho mỗi bài
+
+    let words = text.split(/\s+/); 
+    let html = "";
+    let count = 0;
+    
+    // Tạo bản sao để đánh dấu những từ đã được chuyển thành ô trống (tránh trùng)
+    let usedInThisRound = [];
+
+    for(let w of words){
+        // Làm sạch từ (bỏ dấu câu) để so sánh
+        let clean = w.replace(/[^a-zA-Z]/g,"").toLowerCase();
+        // Lấy dấu câu đi kèm (nếu có)
+        let punctuation = w.replace(/[a-zA-Z]/g,"");
+
+        if(targetWords.includes(clean) && !usedInThisRound.includes(clean) && count < 10){
+            html += `<input class="blank" data-answer="${clean}" placeholder="..."> ${punctuation} `;
+            usedInThisRound.push(clean);
+            count++;
+        } else {
+            html += w + " ";
+        }
+    }
+
+    document.getElementById("exercise").innerHTML = html;
+    document.getElementById("score").innerText = "";
+}
+
+function check(){
+    let inputs = document.querySelectorAll(".blank");
+    let correct = 0;
+    let key = "wrong_" + currentLesson;
+    let wrongWords = JSON.parse(localStorage.getItem(key)) || [];
+
+    inputs.forEach(inp => {
+        inp.classList.remove("correct", "wrong");
+        let ans = inp.dataset.answer;
+        let user = inp.value.trim().toLowerCase();
+
+        if(user === ans){
+            inp.classList.add("correct");
+            correct++;
+        } else {
+            inp.classList.add("wrong");
+            // Hiển thị đáp án đúng vào ô nếu sai (tùy chọn)
+            inp.value = ans; 
+            if(!wrongWords.includes(ans)) wrongWords.push(ans);
+        }
+    });
+
+    localStorage.setItem(key, JSON.stringify(wrongWords));
+    let percent = Math.round(correct/inputs.length*100);
+    document.getElementById("score").innerText = `Kết quả: ${correct}/${inputs.length} (${percent}%)`;
+}
+
+function showWrong(){
+    let key = "wrong_" + currentLesson;
+    let wrongWords = JSON.parse(localStorage.getItem(key)) || [];
+    if(wrongWords.length === 0){
+        alert("Tuyệt vời! Bạn không có từ nào sai. 🎉");
+    } else {
+        alert("Các từ bạn cần chú ý: " + wrongWords.join(", "));
+    }
+}
+
+window.onload = () => loadLesson(0);
+
+</script>
+
+</body>
+</html>
